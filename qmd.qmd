@@ -1,4 +1,64 @@
-# Load packages -----------------------------------------------------------
+---
+title: "Winter Institute in Data Science"
+subtitle: "Final Projects; R analysis"
+author: "Adam Weber, Ali Amini, John Burzawa"
+institute: "American University"
+date: "January 12, 2023"
+date-format: long
+format:
+  revealjs: 
+    footer: "Winter Institute in Data Science"
+    theme: [dark, theme.scss]
+    chalkboard: false
+    menu: true
+    highlight-style: ayu-dark
+    fig-width: 7.5
+    fig-height: 5.5
+    code-line-numbers: false
+    echo: true
+    slide-number: true
+    show-slide-number: speaker
+    self-contained: true
+execute:
+  cache: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+## Overview
+
+::: {style="line-height: 1em"}
+-   Cleaning Data <text style="font-size: 1em; line-height: 1em">
+    -   Import Data
+    -   Rename Variables
+    -   Define New Variables </text>
+
+<hr style="height:1pt; visibility:hidden;" />
+
+-   Statics <text style="font-size: 1em; line-height: 1em">
+    -   Standard Deviation (Polarization)
+    -   Mean
+    -   T test </text>
+
+<hr style="height:1pt; visibility:hidden;" />
+
+-   Visualization <text style="font-size: 1em; line-height: 1em">
+    -   ggplot
+    -   box plot
+    -   bar chart </text>
+:::
+
+------------------------------------------------------------------------
+
+## Load packages and import two data set
+
+-   Cleaning data
+
+```{r}
+#| label: load-packages
+#| include: false
+## 
 
 library(devtools) 
 library(dplyr)
@@ -6,14 +66,12 @@ library(here)
 library(tidyverse)
 library(haven)
 library(ggplot2)
-# In the following steps I code for 2020 firs and then I repeat the process for 2016---------
 
 
-# Read ANES 2020 and 2016 from local file ------------------------------
-
-anes_2020 <- read.csv(here("anes_2020.csv"))
+anes_2020 <- read_csv("anes_2020.csv")
 anes_2016 <- read_dta("~/anes_timeseries_2016.dta")
 
+## cleaning data
 
 # Rename variable  for free trade ------------------------------
 
@@ -48,9 +106,15 @@ anes_2016 <- anes_2016 %>%  mutate(
     party_id_orig == 4 ~ "ind"),
   republican = if_else(pid_chr == "rep", "yes", "no"))
 
-#  Re-code the intensities, 7-point free trade scale from -3 to 3 for opinion in free trade---------
 
+```
 
+## FAVOR OR OPPOSE FREE TRADE AGREEMENTS WITH OTHER COUNTRIES
+
+```{r}
+#| label: load-packages
+#| include: false
+##
 anes_2020 <- anes_2020 %>% 
   mutate (opinion_free_trade = case_when( free_trade == 3 ~ 0,
                               free_trade == 1 & free_trade_intensity == 1 ~ 3,  
@@ -71,8 +135,7 @@ anes_2016 <- anes_2016 %>%
 
 
 
-#calculation of Standard Deviation and mean for each party in free  trade-------
-
+#calculation of Standard Deviation and mean for each party in free  trade----
 anes_2020 %>% group_by(pid_chr) %>%
   summarise(sd_free_trade = sd(opinion_free_trade, na.rm = TRUE))
 
@@ -99,7 +162,7 @@ ggplot(data = anes_2020,
   geom_bar(position = "dodge") + scale_fill_manual(values=c('blue', 'green', 'red', 'white')) +theme_dark()
 
 boxplot(anes_2016$opinion_free_trade, anes_2020$opinion_free_trade,
-        names = c('2016', '2020'), col=c('red', 'blue'), main='Public oppinion in health care')
+        names = c('2016', '2020'), col=c('red', 'blue'), main='Public oppinion in free trade')
 
 
 ggplot(anes_2016, aes(anes_2016$pid_chr,anes_2016$opinion_free_trade)) + 
@@ -108,10 +171,15 @@ ggplot(anes_2016, aes(anes_2016$pid_chr,anes_2016$opinion_free_trade)) +
 ggplot(anes_2020, aes(anes_2020$pid_chr,anes_2020$opinion_free_trade)) + 
   geom_boxplot(col=c('blue','green', 'red', 'white'))
 
--------------------------------------------------------------------------------------------------
+```
 
+## INCREASE/DECREASE GOVERNMENT SPENDING TO HELP PAY FOR HEALTH CARE
 
-#create a variable for opinion_health_care-----
+```{r}
+#| label: load-packages
+#| include: falseINCREASE/DECREASE GOVERNMENT SPENDING TO HELP PAY FOR HEALTH CARE}
+##
+
 
 anes_2020 <- anes_2020 %>% 
   mutate (opinion_health_care = case_when( V202380x == 4 ~ 0,
@@ -175,14 +243,15 @@ ggplot(anes_2020, aes(anes_2020$pid_chr,anes_2020$opinion_health_care)) +
   geom_boxplot(col=c('blue','green', 'red', 'white'))
 
 
+```
 
-------------------------------------------------------------------------------------------------------
+## FAVOR OR OPPOSE BUILDING A WALL ON BORDER WITH MEXICO
 
+```{r}
+#| label: load-packages
+#| include: false
 
-  
-
-
-
+##
 
 # create a variable for building war at Mexico borders-------------
 anes_2020 <- anes_2020 %>% 
@@ -238,7 +307,7 @@ ggplot(data = anes_2020,
 
 
 boxplot(anes_2016$opinion_wall_Mexico,anes_2020$opinion_wall_Mexico, 
-        names = c('2016', '2020'), col=c('red', 'blue'), main='Public oppinion in health care')
+        names = c('2016', '2020'), col=c('red', 'blue'), main='Public oppinion in wall on Mexico')
 
 
 ggplot(anes_2016, aes(anes_2016$pid_chr,anes_2016$opinion_wall_Mexico)) + 
@@ -248,16 +317,16 @@ ggplot(anes_2020, aes(anes_2020$pid_chr,anes_2020$opinion_wall_Mexico)) +
   geom_boxplot(col=c('blue','green', 'red', 'white'))
 
 
+```
 
-------------------------------------------------------------------------------------------------------------------
+APPROVE OR DISAPPROVE PRESIDENT HANDLING JOB
+
+```{r}
+#| label: load-packages
+#| include: false
 
 
-
-
-
-
---------------------------------------------------------------------------------------------------------------------
-# create a variable for PRESIDENT HANDLING JOB scale -2, -1, +1, +2-------------------
+## create a variable for PRESIDENT HANDLING JOB scale -2, -1, +1, +2-------------------
 
 anes_2020 <- anes_2020 %>% 
   mutate (opinion_persident_job = case_when(V201129x == 3 ~ -1,
@@ -307,7 +376,7 @@ ggplot(data = anes_2020,
   geom_bar(position = "dodge")+scale_fill_manual(values=c('blue', 'green', 'red', 'white')) +theme_dark()
 
 boxplot(anes_2016$opinion_persident_job,anes_2020$opinion_persident_job, 
-        names = c('2016', '2020'), col=c('red', 'blue'), main='Public oppinion in health care')
+        names = c('2016', '2020'), col=c('red', 'blue'), main='Public oppinion in persident job ')
 
 
 ggplot(anes_2016, aes(anes_2016$pid_chr,anes_2016$opinion_persident_job)) + 
@@ -318,7 +387,17 @@ ggplot(anes_2020, aes(anes_2020$pid_chr,anes_2020$opinion_persident_job)) +
 
 
 
-----------------------------------------
+```
+
+## 
+
+## GOVERNMENT ACTION ABOUT RISING TEMPERATURES
+
+```{r}
+#| label: load-packages
+#| include: false
+##
+
   # create a variable for rising temperatures-------------
 
 anes_2020 <- anes_2020 %>% 
@@ -378,52 +457,8 @@ ggplot(anes_2016, aes(anes_2016$pid_chr, anes_2016$opinion_free_trade)) +
 ggplot(anes_2020, aes(anes_2020$pid_chr,anes_2020$opinion_rising_temperature)) + 
   geom_boxplot(col=c('blue','green', 'red', 'white'))
 
+```
 
+------------------------------------------------------------------------
 
-
-
-
------------------------------------------
-  
-  #create a variable for opinion_vote_mail for 2020
-  anes_2020 <- anes_2020 %>% 
-  mutate (opinion_vote_mail = case_when( V201356x == 4 ~ 0,
-                                         V201356x == 1  ~ 3,  
-                                         V201356x == 2  ~ 2,
-                                         V201356x == 3  ~ 1,
-                                         V201356x == 7  ~ -3,
-                                         V201356x == 6  ~ -2,
-                                         V201356x == 5 ~ -1)) 
-
-
-
-
-
-
-#calculation of Standard Deviation and mean for each party in vote mail  trade (only for ANES-2020)----
-
-anes_2020 %>% group_by(pid_chr) %>%
-  summarise(sd_vote_mail = sd(opinion_vote_mail, na.rm = TRUE))
-
-
-
-anes_2020 %>% group_by(pid_chr) %>%
-  summarise(mean_vote_mail = mean(opinion_vote_mail, na.rm = TRUE))
-
-ggplot(data = anes_2020,
-       mapping = aes(x=anes_2020$opinion_vote_mail, fill = anes_2020$pid_chr)) +
-  geom_bar(position = "dodge")+scale_fill_manual(values=c('blue', 'green', 'red', 'white')) +theme_dark()
-
-
-ggplot(anes_2020, aes(anes_2020$pid_chr,anes_2020$opinion_vote_mail)) + 
-  geom_boxplot(col=c('blue','green', 'red', 'white'))
-
-
-boxplot(anes_2020$opinion_vote_mail, 
-         col=c('blue'), main='Public oppinion vote by mail')
-# End of codes -----
-
-
-
-
-
+## Thank you!
